@@ -1,0 +1,202 @@
+Apa Yang Kita Nak Simpan?
+
+Berdasarkan visi ALPA 2.0:
+
+User
+Team
+Project
+Task
+Activity
+AI Report
+
+Version 1 Database Blueprint
+Users
+
+Siapa yang guna sistem.
+
+users
+
+id
+name
+email
+password_hash
+role
+created_at
+updated_at
+
+Role:
+
+employee
+team_lead
+founder
+admin
+
+Teams
+
+Satu syarikat atau pasukan.
+
+teams
+
+id
+name
+description
+owner_id
+created_at
+
+Team Members
+
+Sebab seorang user boleh join banyak team pada masa depan.
+
+team_members
+
+id
+team_id
+user_id
+joined_at
+
+Projects
+
+Setiap team ada projek.
+
+projects
+
+id
+team_id
+name
+description
+status
+start_date
+end_date
+created_at
+
+Status:
+
+planning
+active
+completed
+archived
+
+Tasks
+
+Ini jantung ALPA.
+
+tasks
+
+id
+project_id
+assigned_to
+title
+description
+priority
+status
+deadline
+created_at
+updated_at
+
+Priority:
+
+low
+medium
+high
+urgent
+
+Status:
+
+todo
+in_progress
+blocked
+completed
+
+Activities
+
+Ini yang akan feed AI nanti.
+contoh:
+
+Worked on JWT Login
+Duration: 120 mins
+
+Table:
+
+activities
+
+id
+user_id
+task_id
+activity_type
+duration_minutes
+notes
+created_at
+
+Activity Type:
+
+coding
+
+meeting
+
+learning
+
+testing
+
+documentation
+
+research
+
+AI Reports
+
+Laporan yang dijana AI.
+
+ai_reports
+
+id
+user_id
+team_id
+report_type
+content
+created_at
+
+Report Type:
+
+daily
+
+weekly
+
+monthly
+
+team_summary
+
+Relationship
+
+Ini paling penting.
+
+User
+  |
+  |
+  +------ Team Member ------ Team
+                                  |
+                                  |
+                               Project
+                                  |
+                                  |
+                                Task
+                                  |
+                                  |
+                               Activity
+
+
+User
+  |
+  |
+AI Report
+
+MVP Scope:
+
+users
+
+projects
+
+tasks
+
+activities
+
+
+
