@@ -87,3 +87,30 @@ KENA CHECK :
 3. Is request reaching server?
 4. Is application responding?
 
+REMARK :
+
+Apa fungsi dua schema ni?
+1. ProjectCreate
+
+Untuk user hantar:
+
+{
+  "title": "ALPA 2.0",
+  "description": "AI productivity assistant"
+}
+
+2. ProjectResponse
+
+Untuk API pulangkan:
+
+{
+  "id": 1,
+  "title": "ALPA 2.0",
+  "description": "AI productivity assistant",
+  "status": "active",
+  "owner_id": 8,
+  "created_at": "2026-07-22T..."
+}
+
+
+

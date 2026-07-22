@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 
 from app.database.connection import Base
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -39,4 +40,9 @@ class User(Base):
     created_at = Column(
         DateTime,
         default=datetime.utcnow
+    )
+
+    projects = relationship(
+    "Project",
+    back_populates="owner"
     )
