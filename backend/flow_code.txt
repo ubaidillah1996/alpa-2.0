@@ -2,7 +2,10 @@ password postgres : postgres
 port : 5432
 LOCALE : Default
 activating env : venv\Scripts\activate
+\q : exit
+\r : cancel
 
+IO dalam schemas 
 
 
 ALPA 2.0 BACKEND FOUNDATION
@@ -69,4 +72,17 @@ PHASE 1 — Backend Foundation
 ✅ Users Table Created
 
 next : crud API
+
+REMARK : 
+Code nampak betul
+Database okay
+Server startup okay
+
+Tapi application tak respond
+
+KENA CHECK : 
+1. Is service running?
+2. Is port available?
+3. Is request reaching server?
+4. Is application responding?
 

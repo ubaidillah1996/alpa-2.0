@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from app.database.connection import engine
 from app.models import user
+from app.routes.users import router as users_router
 
 app = FastAPI(
     title="ALPA API",
     version="2.0.0"
 )
 
+app.include_router(users_router)
 
 @app.get("/")
 def root():
