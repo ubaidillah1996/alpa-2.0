@@ -2,6 +2,7 @@ password postgres : postgres
 port : 5432
 LOCALE : Default
 activating env : venv\Scripts\activate
+restart server :uvicorn app.main:app
 \q : exit
 \r : cancel
 
