@@ -6,6 +6,9 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 from app.core.security import hash_password
 
+from app.schemas.user import UserResponse
+from app.core.dependencies import get_current_user
+
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
@@ -47,3 +50,13 @@ def register_user(
         "full_name": new_user.full_name,
         "email": new_user.email
     }
+
+@router.get(
+    "/me",
+    response_model=UserResponse
+)
+def get_my_profile(
+    current_user: User = Depends(get_current_user)
+):
+
+    return current_user
