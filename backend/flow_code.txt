@@ -112,5 +112,26 @@ Untuk API pulangkan:
   "created_at": "2026-07-22T..."
 }
 
+REMARK: KENAPA ASING? :
+
+1. ProjectCreate
+
+= wajib ada title.
+
+{
+"title":"ALPA"
+}
+
+2. ProjectUpdate
+
+= boleh update mana-mana field.
+
+Contoh:
+
+{
+"status":"completed"
+}
+
+
 
 

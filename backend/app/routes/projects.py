@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
@@ -8,12 +8,14 @@ from app.models.user import User
 
 from app.schemas.project import (
     ProjectCreate,
-    ProjectResponse
+    ProjectResponse,
+    ProjectUpdate
 )
 
 from app.core.dependencies import get_current_user
 from typing import List
 
+from fastapi import HTTPException
 
 router = APIRouter(
     prefix="/projects",
@@ -62,3 +64,102 @@ def get_projects(
 
 
     return projects
+
+@router.get(
+    "/{project_id}",
+    response_model=ProjectResponse
+)
+def get_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    project = db.query(Project).filter(
+        Project.id == project_id,
+        Project.owner_id == current_user.id
+    ).first()
+
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    return project
+
+@router.put(
+    "/{project_id}",
+    response_model=ProjectResponse
+)
+def update_project(
+    project_id: int,
+    project_data: ProjectUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    project = db.query(Project).filter(
+        Project.id == project_id,
+        Project.owner_id == current_user.id
+    ).first()
+
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    if project_data.title is not None:
+        project.title = project_data.title
+
+
+    if project_data.description is not None:
+        project.description = project_data.description
+
+
+    if project_data.status is not None:
+        project.status = project_data.status
+
+
+    db.commit()
+
+    db.refresh(project)
+
+
+    return project
+
+@router.delete(
+    "/{project_id}"
+)
+def delete_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    project = db.query(Project).filter(
+        Project.id == project_id,
+        Project.owner_id == current_user.id
+    ).first()
+
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    db.delete(project)
+
+    db.commit()
+
+
+    return {
+        "message": "Project deleted successfully"
+    }

@@ -26,3 +26,11 @@ class ProjectResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProjectUpdate(BaseModel):
+
+    title: str | None = None
+
+    description: str | None = None
+
+    status: str | None = None
