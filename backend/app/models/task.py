@@ -1,23 +1,13 @@
-from datetime import datetime
-
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Text,
-    DateTime,
-    ForeignKey
-)
-
-
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 from app.database.connection import Base
 
 
-class Project(Base):
+class Task(Base):
 
-    __tablename__ = "projects"
+    __tablename__ = "tasks"
 
 
     id = Column(
@@ -41,13 +31,19 @@ class Project(Base):
 
     status = Column(
         String,
-        default="active"
+        default="pending"
     )
 
 
-    owner_id = Column(
+    priority = Column(
+        String,
+        default="medium"
+    )
+
+
+    project_id = Column(
         Integer,
-        ForeignKey("users.id"),
+        ForeignKey("projects.id"),
         nullable=False
     )
 
@@ -58,13 +54,7 @@ class Project(Base):
     )
 
 
-    owner = relationship(
-        "User",
-        back_populates="projects"
-    )
-
-    tasks = relationship(
-    "Task",
-    back_populates="project",
-    cascade="all, delete"
+    project = relationship(
+        "Project",
+        back_populates="tasks"
     )
