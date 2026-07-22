@@ -4,6 +4,7 @@ from app.models import user
 from app.routes.users import router as users_router
 from app.routes.auth import router as auth_router
 from app.routes.projects import router as project_router
+from app.routes import tasks
 
 app = FastAPI(
     title="ALPA API",
@@ -13,6 +14,10 @@ app = FastAPI(
 app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(project_router)
+app.include_router(
+    tasks.router
+)
+
 
 @app.get("/")
 def root():
