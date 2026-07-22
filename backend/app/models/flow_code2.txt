@@ -1,0 +1,15 @@
+SQLAlchemy akan translate:
+class User(Base):
+menjadi: CREATE TABLE users
+
+Alembic Migration: 
+SQLAlchemy Model
+
+↓
+
+Alembic Migration
+
+↓
+
+Database Update
+

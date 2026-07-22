@@ -1,3 +1,10 @@
+password postgres : postgres
+port : 5432
+LOCALE : Default
+activating env : venv\Scripts\activate
+
+
+
 ALPA 2.0 BACKEND FOUNDATION
 
 PHASE 0 - Product Planning
@@ -41,3 +48,25 @@ id="w8j3v0"
               alpa_db
 
 AFTER : Database connected ✅ 
+
+PHASE 0 — Planning
+✅ Vision
+✅ Roadmap
+✅ Architecture
+✅ Database Design
+✅ API Design
+
+PHASE 1 — Backend Foundation
+✅ FastAPI
+✅ Swagger
+✅ PostgreSQL
+✅ SQLAlchemy
+✅ Environment Variables
+✅ Database Connection
+✅ Alembic
+✅ User Model
+✅ First Migration
+✅ Users Table Created
+
+next : crud API
+
