@@ -1,0 +1,22 @@
+- load_dotenv() - Ambil: .env dan baca: DATABASE_URL
+
+- engine : 
+
+FastAPI
+   |
+   |
+SQLAlchemy Engine
+   |
+   |
+PostgreSQL
+
+- SessionLocal:
+Ini nanti digunakan untuk:
+
+Create user
+Update task
+Save activity
+Generate AI report
+
+- Base : Ini parent untuk semua database table.
+
