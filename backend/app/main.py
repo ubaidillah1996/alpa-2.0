@@ -9,10 +9,22 @@ from app.routes import tasks
 from fastapi import HTTPException
 
 from app.exceptions.handlers import http_exception_handler
+from app.routes.activities import router as activities_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="ALPA API",
     version="2.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_exception_handler(
@@ -26,7 +38,9 @@ app.include_router(project_router)
 app.include_router(
     tasks.router
 )
-
+app.include_router(
+    activities_router
+)
 
 @app.get("/")
 def root():

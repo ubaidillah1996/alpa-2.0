@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.project import Project
 from app.models.task import Task
+from app.models.activity import Activity
 
 def get_project_progress(
     db: Session,
@@ -200,3 +201,68 @@ def get_task_analytics(
             "low": low_priority_tasks
         }
     }
+
+def get_activity_summary(
+    db: Session,
+    user_id: int
+):
+
+    activities = db.query(Activity).filter(
+        Activity.user_id == user_id
+    ).all()
+
+
+    total_activities = len(activities)
+
+
+    coding_count = len([
+        activity for activity in activities
+        if activity.activity_type == "coding"
+    ])
+
+
+    learning_count = len([
+        activity for activity in activities
+        if activity.activity_type == "learning"
+    ])
+
+
+    planning_count = len([
+        activity for activity in activities
+        if activity.activity_type == "planning"
+    ])
+
+
+    review_count = len([
+        activity for activity in activities
+        if activity.activity_type == "review"
+    ])
+
+
+    activity_counts = {
+        "coding": coding_count,
+        "learning": learning_count,
+        "planning": planning_count,
+        "review": review_count
+    }
+
+
+    most_active_type = "none"
+
+    if total_activities > 0:
+        most_active_type = max(
+            activity_counts,
+            key=activity_counts.get
+        )
+
+
+    return {
+        "total_activities": total_activities,
+        "coding": coding_count,
+        "learning": learning_count,
+        "planning": planning_count,
+        "review": review_count,
+        "most_active_type": most_active_type
+    }
+
+    
