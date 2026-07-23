@@ -124,6 +124,39 @@ def get_project_insight(
     return insight
 
 @router.get(
+    "/{project_id}/score"
+)
+def get_project_score(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    summary = analytics_service.get_project_summary(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+
+    if not summary:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    score = intelligence_service.calculate_productivity_score(
+        summary
+    )
+
+
+    return {
+        "project_id": project_id,
+        **score
+    }
+
+@router.get(
     "/{project_id}",
     response_model=ProjectResponse
 )

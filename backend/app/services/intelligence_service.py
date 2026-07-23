@@ -56,3 +56,64 @@ def generate_project_insight(
         "insights": insights,
         "recommendations": recommendations
     }
+
+def calculate_productivity_score(
+    summary: dict
+):
+
+    progress = summary["progress"]
+
+    high_priority = summary["high_priority_tasks"]
+
+    pending_tasks = summary["pending_tasks"]
+
+
+    score = 0
+
+
+    # Completion contribution
+    score += progress * 0.5
+
+
+    # Priority contribution
+    if high_priority == 0:
+        score += 30
+
+    elif high_priority <= 2:
+        score += 20
+
+    else:
+        score += 10
+
+
+    # Pending workload contribution
+    if pending_tasks <= 2:
+        score += 20
+
+    elif pending_tasks <= 5:
+        score += 10
+
+    else:
+        score += 5
+
+
+    score = round(score)
+
+
+    if score >= 80:
+        level = "Excellent"
+
+    elif score >= 60:
+        level = "Good"
+
+    elif score >= 40:
+        level = "Needs Attention"
+
+    else:
+        level = "Critical"
+
+
+    return {
+        "productivity_score": score,
+        "level": level
+    }
