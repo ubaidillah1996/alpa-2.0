@@ -107,29 +107,26 @@ def update_task(
     return task
 
 @router.delete(
-    "/{project_id}/tasks/{task_id}"
+    "/{project_id}"
 )
-def delete_task(
+def delete_project(
     project_id: int,
-    task_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    task = task_service.delete_task(
+    project = project_service.delete_project(
         db=db,
-        task_id=task_id,
-        project_id=project_id
+        project_id=project_id,
+        owner_id=current_user.id
     )
 
-
-    if not task:
+    if not project:
         raise HTTPException(
             status_code=404,
-            detail="Task not found"
+            detail="Project not found"
         )
 
-
     return {
-        "message": "Task deleted successfully"
+        "message": "Project deleted successfully"
     }

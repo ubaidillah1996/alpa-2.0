@@ -13,9 +13,9 @@ from app.schemas.project import (
 )
 
 from app.core.dependencies import get_current_user
-from typing import List
 
 from fastapi import HTTPException
+from app.services import project_service
 
 router = APIRouter(
     prefix="/projects",
@@ -28,67 +28,35 @@ router = APIRouter(
     response_model=ProjectResponse
 )
 def create_project(
-    project: ProjectCreate,
+    project_data: ProjectCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    new_project = Project(
-        title=project.title,
-        description=project.description,
+    project = project_service.create_project(
+        db=db,
+        title=project_data.title,
+        description=project_data.description,
         owner_id=current_user.id
     )
 
-
-    db.add(new_project)
-
-    db.commit()
-
-    db.refresh(new_project)
-
-
-    return new_project
+    return project
 
 @router.get(
     "/",
-    response_model=List[ProjectResponse]
+    response_model=list[ProjectResponse]
 )
 def get_projects(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    projects = db.query(Project).filter(
-        Project.owner_id == current_user.id
-    ).all()
-
+    projects = project_service.get_projects(
+        db=db,
+        owner_id=current_user.id
+    )
 
     return projects
-
-@router.get(
-    "/{project_id}",
-    response_model=ProjectResponse
-)
-def get_project(
-    project_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-
-    project = db.query(Project).filter(
-        Project.id == project_id,
-        Project.owner_id == current_user.id
-    ).first()
-
-
-    if not project:
-        raise HTTPException(
-            status_code=404,
-            detail="Project not found"
-        )
-
-
-    return project
 
 @router.put(
     "/{project_id}",
@@ -101,10 +69,13 @@ def update_project(
     current_user: User = Depends(get_current_user)
 ):
 
-    project = db.query(Project).filter(
-        Project.id == project_id,
-        Project.owner_id == current_user.id
-    ).first()
+    project = project_service.update_project(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id,
+        title=project_data.title,
+        description=project_data.description
+    )
 
 
     if not project:
@@ -114,21 +85,29 @@ def update_project(
         )
 
 
-    if project_data.title is not None:
-        project.title = project_data.title
-
-
-    if project_data.description is not None:
-        project.description = project_data.description
-
-
-    if project_data.status is not None:
-        project.status = project_data.status
-
-
-    db.commit()
-
-    db.refresh(project)
-
-
     return project
+
+@router.delete(
+    "/{project_id}"
+)
+def delete_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    project = project_service.delete_project(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+    return {
+        "message": "Project deleted successfully"
+    }
