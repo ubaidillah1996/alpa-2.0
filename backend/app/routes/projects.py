@@ -17,6 +17,7 @@ from app.core.dependencies import get_current_user
 from fastapi import HTTPException
 from app.services import project_service
 from app.services import analytics_service
+from app.services import intelligence_service
 
 router = APIRouter(
     prefix="/projects",
@@ -91,6 +92,36 @@ def get_project_summary(
 
 
     return summary
+
+@router.get(
+    "/{project_id}/insight"
+)
+def get_project_insight(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    summary = analytics_service.get_project_summary(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+
+    if not summary:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    insight = intelligence_service.generate_project_insight(
+        summary
+    )
+
+
+    return insight
 
 @router.get(
     "/{project_id}",
