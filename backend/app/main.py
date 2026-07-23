@@ -6,9 +6,18 @@ from app.routes.auth import router as auth_router
 from app.routes.projects import router as project_router
 from app.routes import tasks
 
+from fastapi import HTTPException
+
+from app.exceptions.handlers import http_exception_handler
+
 app = FastAPI(
     title="ALPA API",
     version="2.0.0"
+)
+
+app.add_exception_handler(
+    HTTPException,
+    http_exception_handler
 )
 
 app.include_router(users_router)

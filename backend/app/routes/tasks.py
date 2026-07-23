@@ -15,7 +15,7 @@ from app.schemas.task import (
 
 from app.core.dependencies import get_current_user
 from typing import List
-
+from app.services import analytics_service
 from app.services import task_service
 
 router = APIRouter(
@@ -72,7 +72,32 @@ def get_project_tasks(
         project_id=project_id
     )
 
-    return tasks
+    return 
+
+@router.get(
+    "/{project_id}/tasks/analytics"
+)
+def get_task_analytics(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    analytics = analytics_service.get_task_analytics(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+
+    if not analytics:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    return analytics
 
 @router.put(
     "/{project_id}/tasks/{task_id}",
@@ -107,26 +132,29 @@ def update_task(
     return task
 
 @router.delete(
-    "/{project_id}"
+    "/{project_id}/tasks/{task_id}"
 )
-def delete_project(
+def delete_task(
     project_id: int,
+    task_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    project = project_service.delete_project(
+    task = task_service.delete_task(
         db=db,
-        project_id=project_id,
-        owner_id=current_user.id
+        task_id=task_id,
+        project_id=project_id
     )
 
-    if not project:
+
+    if not task:
         raise HTTPException(
             status_code=404,
-            detail="Project not found"
+            detail="Task not found"
         )
 
+
     return {
-        "message": "Project deleted successfully"
+        "message": "Task deleted successfully"
     }
