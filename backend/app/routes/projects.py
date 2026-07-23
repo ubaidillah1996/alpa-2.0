@@ -16,6 +16,7 @@ from app.core.dependencies import get_current_user
 
 from fastapi import HTTPException
 from app.services import project_service
+from app.services import analytics_service
 
 router = APIRouter(
     prefix="/projects",
@@ -43,20 +44,77 @@ def create_project(
     return project
 
 @router.get(
-    "/",
-    response_model=list[ProjectResponse]
+    "/{project_id}/progress"
 )
-def get_projects(
+def get_project_progress(
+
+    project_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    projects = project_service.get_projects(
+    progress = analytics_service.get_project_progress(
         db=db,
+        project_id=project_id,
         owner_id=current_user.id
     )
 
-    return projects
+    if not progress:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+    return progress
+
+@router.get(
+    "/{project_id}/summary"
+)
+def get_project_summary(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    summary = analytics_service.get_project_summary(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+
+    if not summary:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+
+    return summary
+
+@router.get(
+    "/{project_id}",
+    response_model=ProjectResponse
+)
+def get_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    project = project_service.get_project(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found"
+        )
+
+    return project
 
 @router.put(
     "/{project_id}",
@@ -90,6 +148,7 @@ def update_project(
 @router.delete(
     "/{project_id}"
 )
+
 def delete_project(
     project_id: int,
     db: Session = Depends(get_db),
