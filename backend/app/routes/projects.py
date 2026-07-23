@@ -132,4 +132,3 @@ def update_project(
 
 
     return project
-

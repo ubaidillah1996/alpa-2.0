@@ -132,6 +132,40 @@ Contoh:
 "status":"completed"
 }
 
+REMARK : SERVICE LAYER ARCHITECTURE
+
+Pisahkan:
+
+Route (API)
+    |
+    ↓
+Service (Business Logic)
+    |
+    ↓
+Database (SQLAlchemy)
+
+KENAPA ? : bila ALPA besar:
+
+AI Agent
+Analytics
+Reminder
+Notification
+Recommendation
+
+semua akan ulang logic sama.
+
+REMARK :
+
+Route hanya urus:
+
+request
+authentication
+response
+
+Service urus:
+
+logic
+database operation
 
 
 

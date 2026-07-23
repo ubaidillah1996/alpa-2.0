@@ -16,6 +16,7 @@ from app.schemas.task import (
 from app.core.dependencies import get_current_user
 from typing import List
 
+from app.services import task_service
 
 router = APIRouter(
     prefix="/projects",
@@ -46,22 +47,15 @@ def create_task(
         )
 
 
-    new_task = Task(
+    task = task_service.create_task(
+        db=db,
+        project_id=project_id,
         title=task_data.title,
         description=task_data.description,
-        priority=task_data.priority,
-        project_id=project.id
+        priority=task_data.priority
     )
 
-
-    db.add(new_task)
-
-    db.commit()
-
-    db.refresh(new_task)
-
-
-    return new_task
+    return task
 
 @router.get(
     "/{project_id}/tasks",
@@ -73,23 +67,10 @@ def get_project_tasks(
     current_user: User = Depends(get_current_user)
 ):
 
-    project = db.query(Project).filter(
-        Project.id == project_id,
-        Project.owner_id == current_user.id
-    ).first()
-
-
-    if not project:
-        raise HTTPException(
-            status_code=404,
-            detail="Project not found"
-        )
-
-
-    tasks = db.query(Task).filter(
-        Task.project_id == project_id
-    ).all()
-
+    tasks = task_service.get_project_tasks(
+        db=db,
+        project_id=project_id
+    )
 
     return tasks
 
@@ -97,7 +78,6 @@ def get_project_tasks(
     "/{project_id}/tasks/{task_id}",
     response_model=TaskResponse
 )
-
 def update_task(
     project_id: int,
     task_id: int,
@@ -105,11 +85,16 @@ def update_task(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    
-    task = db.query(Task).join(Project).filter(
-        Task.id == task_id,
-        Project.owner_id == current_user.id
-    ).first()
+
+    task = task_service.update_task(
+        db=db,
+        task_id=task_id,
+        project_id=project_id,
+        title=task_data.title,
+        description=task_data.description,
+        priority=task_data.priority,
+        status=task_data.status
+    )
 
 
     if not task:
@@ -117,23 +102,6 @@ def update_task(
             status_code=404,
             detail="Task not found"
         )
-
-
-    if task_data.title is not None:
-        task.title = task_data.title
-
-    if task_data.description is not None:
-        task.description = task_data.description
-
-    if task_data.status is not None:
-        task.status = task_data.status
-
-    if task_data.priority is not None:
-        task.priority = task_data.priority
-
-
-    db.commit()
-    db.refresh(task)
 
 
     return task
@@ -148,11 +116,11 @@ def delete_task(
     current_user: User = Depends(get_current_user)
 ):
 
-    task = db.query(Task).join(Project).filter(
-        Task.id == task_id,
-        Task.project_id == project_id,
-        Project.owner_id == current_user.id
-    ).first()
+    task = task_service.delete_task(
+        db=db,
+        task_id=task_id,
+        project_id=project_id
+    )
 
 
     if not task:
@@ -160,10 +128,6 @@ def delete_task(
             status_code=404,
             detail="Task not found"
         )
-
-
-    db.delete(task)
-    db.commit()
 
 
     return {
