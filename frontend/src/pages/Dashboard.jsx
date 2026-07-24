@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
+    
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -26,7 +29,18 @@ function Dashboard() {
 
     };
 
-    
+    const logout = () => {
+
+        localStorage.removeItem(
+            "token"
+        );
+
+
+        navigate("/login");
+
+    };
+
+
 
     return (
 
@@ -36,9 +50,17 @@ function Dashboard() {
                 ALPA Dashboard
             </h1>
 
+
+            <button
+                onClick={logout}
+            >
+                Logout
+            </button>
+
+
         </div>
 
-    );
+    )
 
 }
 
