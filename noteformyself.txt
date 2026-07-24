@@ -1,0 +1,16 @@
+1. Open folder alpa-2.0
+
+2. Terminal baru
+
+3. Pergi backend
+
+cd backend
+
+4. Activate
+
+venv\Scripts\activate
+
+5. Run server
+
+uvicorn app.main:app --reload
+

@@ -234,3 +234,19 @@ def delete_project(
     return {
         "message": "Project deleted successfully"
     }
+
+@router.get(
+    "/",
+    response_model=list[ProjectResponse]
+)
+def get_projects(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    projects = db.query(Project).filter(
+        Project.owner_id == current_user.id
+    ).all()
+
+
+    return projects
